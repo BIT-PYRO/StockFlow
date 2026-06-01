@@ -2,18 +2,19 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.dashboard import DashboardStats
-from app.services.dashboard_service import DashboardService
-from app.auth.rbac import require_manager_or_above
-from app.models.user import User
+from app.schemas import DashboardResponse
+import app.crud as crud
 
 router = APIRouter()
 
 
-@router.get("", response_model=DashboardStats)
-def get_dashboard(
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    """Aggregate KPIs and stats for the dashboard. Manager and Admin only."""
-    return DashboardService(db).get_stats()
+@router.get("", response_model=DashboardResponse)
+def get_dashboard(db: Session = Depends(get_db)):
+    """
+    Business analytics dashboard.
+
+    Returns aggregate KPIs for products, customers, orders (broken down by
+    status), total completed-order revenue, and a list of products below the
+    low-stock threshold (stock_quantity < 10) ordered by stock level ascending.
+    """
+    return crud.get_dashboard_stats(db)

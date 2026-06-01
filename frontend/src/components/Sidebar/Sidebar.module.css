@@ -1,0 +1,149 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: var(--color-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+  transition: width var(--transition-normal);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255 255 255 / 0.07);
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoIcon svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.logoName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.logoTagline {
+  font-size: 11px;
+  color: var(--color-sidebar-text);
+  white-space: nowrap;
+}
+
+.nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(148 163 184 / 0.6);
+  padding: 12px 10px 6px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  color: var(--color-sidebar-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.navLink:hover {
+  background-color: var(--color-sidebar-hover);
+  color: #fff;
+}
+
+.navLink.active {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.navLink svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.navLinkLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footer {
+  padding: 12px 10px;
+  border-top: 1px solid rgba(255 255 255 / 0.07);
+  flex-shrink: 0;
+}
+
+.version {
+  font-size: 11px;
+  color: rgba(148 163 184 / 0.5);
+  padding: 4px 10px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15 23 42 / 0.5);
+  z-index: 99;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar.open {
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .overlay {
+    display: block;
+  }
+}

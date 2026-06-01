@@ -1,0 +1,229 @@
+/* ── Design tokens ───────────────────────────────────────────────────────── */
+:root {
+  --color-primary:        #0284C7;
+  --color-primary-dark:   #0369A1;
+  --color-primary-light:  #E0F2FE;
+
+  --color-sidebar-bg:     #0F172A;
+  --color-sidebar-hover:  #1E293B;
+  --color-sidebar-active: #1D4ED8;
+  --color-sidebar-text:   #94A3B8;
+  --color-sidebar-text-active: #FFFFFF;
+
+  --color-bg:             #F8FAFC;
+  --color-card:           #FFFFFF;
+  --color-border:         #E2E8F0;
+  --color-border-light:   #F1F5F9;
+
+  --color-text-primary:   #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #94A3B8;
+
+  --color-success:        #16A34A;
+  --color-success-bg:     #F0FDF4;
+  --color-warning:        #F59E0B;
+  --color-warning-bg:     #FFFBEB;
+  --color-danger:         #E11D48;
+  --color-danger-bg:      #FFF1F2;
+  --color-info:           #0284C7;
+  --color-info-bg:        #F0F9FF;
+
+  --color-skeleton-base:    #F1F5F9;
+  --color-skeleton-shimmer: #E2E8F0;
+
+  /* ── Status badge tokens ──────────────────────────────────────── */
+  --status-pending-bg:      #FFFBEB;
+  --status-pending-color:   #B45309;
+  --status-pending-dot:     #F59E0B;
+
+  --status-confirmed-bg:    #F0F9FF;
+  --status-confirmed-color: #0369A1;
+  --status-confirmed-dot:   #0284C7;
+
+  --status-completed-bg:    #F0FDF4;
+  --status-completed-color: #15803D;
+  --status-completed-dot:   #16A34A;
+
+  --status-cancelled-bg:    #FFF1F2;
+  --status-cancelled-color: #BE123C;
+  --status-cancelled-dot:   #E11D48;
+
+  /* ── Stock / transaction badge tokens ────────────────────────── */
+  --badge-stock-ok-bg:      #F0F9FF;
+  --badge-stock-ok-color:   #0284C7;
+  --badge-stock-low-bg:     #FFFBEB;
+  --badge-stock-low-color:  #F59E0B;
+  --badge-stock-empty-bg:   #FFF1F2;
+  --badge-stock-empty-color:#E11D48;
+
+  --txn-in-bg:    #F0FDF4;
+  --txn-in-color: #15803D;
+  --txn-in-dot:   #16A34A;
+  --txn-out-bg:    #FFF1F2;
+  --txn-out-color: #BE123C;
+  --txn-out-dot:   #E11D48;
+  --txn-adj-bg:    #FFFBEB;
+  --txn-adj-color: #B45309;
+  --txn-adj-dot:   #F59E0B;
+
+  /* ── Error banner border ──────────────────────────────────────── */
+  --color-danger-border:  #FECDD3;
+
+  --sidebar-width:        240px;
+  --navbar-height:        64px;
+
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+
+  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ── Dark theme overrides ────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-primary:        #38BDF8;
+  --color-primary-dark:   #0EA5E9;
+  --color-primary-light:  #0C4A6E;
+
+  --color-sidebar-bg:     #0A0F1E;
+  --color-sidebar-hover:  #1E293B;
+  --color-sidebar-active: #2563EB;
+  --color-sidebar-text:   #94A3B8;
+  --color-sidebar-text-active: #FFFFFF;
+
+  --color-bg:             #0F172A;
+  --color-card:           #1E293B;
+  --color-border:         #334155;
+  --color-border-light:   #1E293B;
+
+  --color-text-primary:   #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted:     #64748B;
+
+  --color-success:        #4ADE80;
+  --color-success-bg:     #052E16;
+  --color-warning:        #FCD34D;
+  --color-warning-bg:     #1C1400;
+  --color-danger:         #FB7185;
+  --color-danger-bg:      #4C0519;
+  --color-info:           #38BDF8;
+  --color-info-bg:        #0C2D48;
+
+  --color-skeleton-base:    #1E293B;
+  --color-skeleton-shimmer: #334155;
+
+  /* ── Status badge tokens ──────────────────────────────────────── */
+  --status-pending-bg:      #1C1400;
+  --status-pending-color:   #FCD34D;
+  --status-pending-dot:     #FCD34D;
+
+  --status-confirmed-bg:    #0C2D48;
+  --status-confirmed-color: #38BDF8;
+  --status-confirmed-dot:   #38BDF8;
+
+  --status-completed-bg:    #052E16;
+  --status-completed-color: #4ADE80;
+  --status-completed-dot:   #4ADE80;
+
+  --status-cancelled-bg:    #4C0519;
+  --status-cancelled-color: #FB7185;
+  --status-cancelled-dot:   #FB7185;
+
+  /* ── Stock / transaction badge tokens ────────────────────────── */
+  --badge-stock-ok-bg:      #0C2D48;
+  --badge-stock-ok-color:   #38BDF8;
+  --badge-stock-low-bg:     #1C1400;
+  --badge-stock-low-color:  #FCD34D;
+  --badge-stock-empty-bg:   #4C0519;
+  --badge-stock-empty-color:#FB7185;
+
+  --txn-in-bg:    #052E16;
+  --txn-in-color: #4ADE80;
+  --txn-in-dot:   #4ADE80;
+  --txn-out-bg:    #4C0519;
+  --txn-out-color: #FB7185;
+  --txn-out-dot:   #FB7185;
+  --txn-adj-bg:    #1C1400;
+  --txn-adj-color: #FCD34D;
+  --txn-adj-dot:   #FCD34D;
+
+  /* ── Error banner border ──────────────────────────────────────── */
+  --color-danger-border: #7F1D1D;
+
+  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.6), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.7), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #CBD5E1; border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb       { background: #475569; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover  { background: #64748B; }
+
+/* ── Utility classes ─────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

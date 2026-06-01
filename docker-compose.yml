@@ -1,0 +1,90 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# StockFlow — Full-stack production compose
+#
+# Services:
+#   db        PostgreSQL 16 (persistent volume)
+#   backend   FastAPI / Uvicorn (depends on db healthy)
+#   frontend  React SPA served by nginx; proxies /api/* → backend
+#
+# Usage:
+#   docker compose up --build          # first run
+#   docker compose up -d               # subsequent runs
+#   docker compose down -v             # stop + wipe volumes
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: stockflow_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB:       ${POSTGRES_DB:-inventory_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test:         ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-inventory_db}"]
+      interval:     10s
+      timeout:      5s
+      retries:      5
+      start_period: 15s
+    networks:
+      - stockflow
+
+  # ── FastAPI backend ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context:    ./backend
+      dockerfile: Dockerfile
+    container_name: stockflow_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL:     postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-inventory_db}
+      CORS_ORIGINS:     ${CORS_ORIGINS:-http://localhost,http://localhost:80}
+      UVICORN_WORKERS:  ${UVICORN_WORKERS:-2}
+    depends_on:
+      db:
+        condition: service_healthy
+    # Backend is intentionally NOT exposed to the host; nginx proxies it.
+    # Uncomment the line below only during local debugging:
+    # ports:
+    #   - "8000:8000"
+    networks:
+      - stockflow
+
+  # ── React frontend (nginx) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context:    ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: stockflow_frontend
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_started   # backend has no healthcheck; use service_started
+    healthcheck:
+      test:         ["CMD", "curl", "-f", "--silent", "--max-time", "5", "http://localhost/"]
+      interval:     30s
+      timeout:      5s
+      start_period: 15s
+      retries:      3
+    networks:
+      - stockflow
+
+# ── Volumes ───────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+
+# ── Networks ──────────────────────────────────────────────────────────────────
+networks:
+  stockflow:
+    driver: bridge

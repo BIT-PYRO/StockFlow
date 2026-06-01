@@ -1,0 +1,35 @@
+.skeleton {
+  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-shimmer) 50%, var(--color-skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeletonText {
+  composes: skeleton;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.skeletonCard {
+  composes: skeleton;
+  height: 100px;
+  border-radius: var(--radius-xl);
+}
+
+.skeletonRow {
+  composes: skeleton;
+  height: 52px;
+  border-radius: var(--radius-md);
+  margin-bottom: 1px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}

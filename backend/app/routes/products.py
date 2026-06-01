@@ -1,81 +1,92 @@
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.product import ProductCreate, ProductRead, ProductUpdate, CategoryCreate, CategoryRead
-from app.schemas.common import PaginatedResponse, MessageResponse
-from app.services.product_service import ProductService
-from app.auth.rbac import require_any_role, require_manager_or_above, require_admin
-from app.models.user import User
+from app.models import ProductStatus
+from app.schemas import ProductCreate, ProductUpdate, ProductResponse, RestockRequest, RestockResponse
+import app.crud as crud
 
 router = APIRouter()
 
-# ── Categories ────────────────────────────────────────────────────────────────
 
-@router.post("/categories", response_model=CategoryRead, status_code=status.HTTP_201_CREATED)
-def create_category(
-    payload: CategoryCreate,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    return ProductService(db).create_category(payload)
-
-
-@router.get("/categories", response_model=list[CategoryRead])
-def list_categories(
-    db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
-):
-    return ProductService(db).list_categories()
-
-
-# ── Products ──────────────────────────────────────────────────────────────────
-
-@router.post("", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
-def create_product(
-    payload: ProductCreate,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    return ProductService(db).create(payload)
-
-
-@router.get("", response_model=PaginatedResponse[ProductRead])
+@router.get("", response_model=list[ProductResponse])
 def list_products(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
-    search: str = Query(None),
-    category_id: int = Query(None),
-    low_stock: bool = Query(False),
+    skip:      int = Query(0, ge=0),
+    limit:     int = Query(100, ge=1, le=500),
+    search:    str | None = Query(
+        default=None,
+        min_length=1,
+        max_length=100,
+        description="Case-insensitive substring match against product name and SKU",
+    ),
+    category:  str | None = Query(
+        default=None,
+        min_length=1,
+        max_length=100,
+        description="Exact category filter (case-insensitive)",
+    ),
+    status:    ProductStatus | None = Query(
+        default=None,
+        description="Filter by product status: active or inactive",
+    ),
+    min_price: Decimal | None = Query(
+        default=None,
+        ge=0,
+        description="Minimum price (inclusive)",
+    ),
+    max_price: Decimal | None = Query(
+        default=None,
+        ge=0,
+        description="Maximum price (inclusive)",
+    ),
     db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
 ):
-    return ProductService(db).list(page, page_size, search, category_id, low_stock)
+    if min_price is not None and max_price is not None and min_price > max_price:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="min_price must not be greater than max_price",
+        )
+    return crud.get_products(
+        db,
+        skip=skip,
+        limit=limit,
+        search=search,
+        category=category,
+        status=status,
+        min_price=min_price,
+        max_price=max_price,
+    )
 
 
-@router.get("/{product_id}", response_model=ProductRead)
-def get_product(
-    product_id: int,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
-):
-    return ProductService(db).get_by_id(product_id)
+@router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
+def create_product(payload: ProductCreate, db: Session = Depends(get_db)):
+    return crud.create_product(db, payload)
 
 
-@router.patch("/{product_id}", response_model=ProductRead)
-def update_product(
-    product_id: int,
-    payload: ProductUpdate,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    return ProductService(db).update(product_id, payload)
+@router.get("/{product_id}", response_model=ProductResponse)
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    return crud.get_product(db, product_id)
 
 
-@router.delete("/{product_id}", response_model=MessageResponse)
-def delete_product(
-    product_id: int,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
-):
-    return ProductService(db).delete(product_id)
+@router.put("/{product_id}", response_model=ProductResponse)
+def update_product(product_id: int, payload: ProductUpdate, db: Session = Depends(get_db)):
+    return crud.update_product(db, product_id, payload)
+
+
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    crud.delete_product(db, product_id)
+
+
+@router.post("/{product_id}/restock", response_model=RestockResponse, status_code=status.HTTP_200_OK)
+def restock_product(product_id: int, payload: RestockRequest, db: Session = Depends(get_db)):
+    """
+    Manually replenish stock for a product.
+
+    - **quantity**: units to add (must be > 0)
+    - **notes**: optional annotation stored on the inventory transaction record
+    """
+    return crud.restock_product(db, product_id, payload)

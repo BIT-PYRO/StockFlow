@@ -1,0 +1,25 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: margin-left var(--transition-normal);
+}
+
+.content {
+  margin-top: var(--navbar-height);
+  padding: 24px;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,53 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  color: var(--color-text-muted);
+  gap: 12px;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-bg);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.description {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 320px;
+}
+
+.action {
+  margin-top: 4px;
+  padding: 8px 20px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.action:hover {
+  background: var(--color-primary-dark);
+}

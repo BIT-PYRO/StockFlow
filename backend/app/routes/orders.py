@@ -2,60 +2,40 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.order import OrderCreate, OrderRead, OrderUpdate
-from app.schemas.common import PaginatedResponse, MessageResponse
-from app.services.order_service import OrderService
-from app.auth.rbac import require_any_role, require_manager_or_above, require_admin
-from app.models.user import User
-from app.models.order import OrderStatus
+from app.schemas import OrderCreate, OrderResponse, OrderStatusUpdate, OrderStatusResponse
+import app.crud as crud
 
 router = APIRouter()
 
 
-@router.post("", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
-def create_order(
-    payload: OrderCreate,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
-):
-    return OrderService(db).create(payload)
+@router.post("", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
+def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
+    return crud.create_order(db, payload)
 
 
-@router.get("", response_model=PaginatedResponse[OrderRead])
+@router.get("", response_model=list[OrderResponse])
 def list_orders(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
-    status: OrderStatus = Query(None),
-    customer_id: int = Query(None),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
     db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
 ):
-    return OrderService(db).list(page, page_size, status, customer_id)
+    return crud.get_orders(db, skip, limit)
 
 
-@router.get("/{order_id}", response_model=OrderRead)
-def get_order(
+@router.get("/{order_id}", response_model=OrderResponse)
+def get_order(order_id: int, db: Session = Depends(get_db)):
+    return crud.get_order(db, order_id)
+
+
+@router.patch("/{order_id}/status", response_model=OrderStatusResponse)
+def update_order_status(
     order_id: int,
+    payload: OrderStatusUpdate,
     db: Session = Depends(get_db),
-    _: User = Depends(require_any_role),
 ):
-    return OrderService(db).get_by_id(order_id)
+    return crud.update_order_status(db, order_id, payload.status)
 
 
-@router.patch("/{order_id}", response_model=OrderRead)
-def update_order(
-    order_id: int,
-    payload: OrderUpdate,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    return OrderService(db).update(order_id, payload)
-
-
-@router.delete("/{order_id}", response_model=MessageResponse)
-def cancel_order(
-    order_id: int,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_manager_or_above),
-):
-    return OrderService(db).cancel(order_id)
+@router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_order(order_id: int, db: Session = Depends(get_db)):
+    crud.delete_order(db, order_id)
